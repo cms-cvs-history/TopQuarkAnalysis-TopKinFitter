@@ -1,5 +1,5 @@
 //
-// $Id: TtSemiKinFitter.cc,v 1.1 2007/07/19 00:32:13 lowette Exp $
+// $Id: TtSemiKinFitter.cc,v 1.2 2007/07/26 08:41:05 lowette Exp $
 //
 
 #include "TopQuarkAnalysis/TopKinFitter/interface/TtSemiKinFitter.h"
@@ -140,7 +140,7 @@ TtSemiEvtSolution TtSemiKinFitter::addKinFitInfo(TtSemiEvtSolution * asol) {
       m5(1,1) = pow(fitsol.getCalLepm().getResTheta(), 2); 
       m5(2,2) = pow(fitsol.getCalLepm().getResPhi(), 2);
     }
-  } else if (jetParam_ == EtEtaPhi) {
+  } else if (lepParam_ == EtEtaPhi) {
     if(fitsol.getDecay()== "electron"){
       m5(0,0) = pow(fitsol.getRecLepe().getResET(), 2);
       m5(1,1) = pow(fitsol.getRecLepe().getResEta(), 2); 
@@ -151,7 +151,7 @@ TtSemiEvtSolution TtSemiKinFitter::addKinFitInfo(TtSemiEvtSolution * asol) {
       m5(1,1) = pow(fitsol.getRecLepm().getResEta(), 2); 
       m5(2,2) = pow(fitsol.getRecLepm().getResPhi(), 2);
     }
-  } else if (jetParam_ == EtThetaPhi) {
+  } else if (lepParam_ == EtThetaPhi) {
     if(fitsol.getDecay()== "electron") {
       m5(0,0) = pow(fitsol.getRecLepe().getResET(), 2);
       m5(1,1) = pow(fitsol.getRecLepe().getResTheta(), 2); 
@@ -164,15 +164,15 @@ TtSemiEvtSolution TtSemiKinFitter::addKinFitInfo(TtSemiEvtSolution * asol) {
     }
   }
   // neutrino resolutions
-  if (lepParam_ == EMom) {
+  if (metParam_ == EMom) {
     m6(0,0) = pow(fitsol.getCalLepn().getResPinv(), 2);
     m6(1,1) = pow(fitsol.getCalLepn().getResTheta(), 2);
     m6(2,2) = pow(fitsol.getCalLepn().getResPhi(), 2);
-  } else if (jetParam_ == EtEtaPhi) {
+  } else if (metParam_ == EtEtaPhi) {
     m6(0,0) = pow(fitsol.getRecLepn().getResET(), 2);
     m6(1,1) = pow(fitsol.getRecLepn().getResEta(), 2);
     m6(2,2) = pow(fitsol.getRecLepn().getResPhi(), 2);
-  } else if (jetParam_ == EtThetaPhi) {
+  } else if (metParam_ == EtThetaPhi) {
     m6(0,0) = pow(fitsol.getRecLepn().getResET(), 2);
     m6(1,1) = pow(fitsol.getRecLepn().getResTheta(), 2);
     m6(2,2) = pow(fitsol.getRecLepn().getResPhi(), 2);
