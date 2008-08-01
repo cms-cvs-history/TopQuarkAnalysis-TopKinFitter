@@ -1,0 +1,18 @@
+module kinFitTtSemiEvent = TtSemiKinFitProducerElectron {
+  InputTag jets = selectedLayer1Jets
+  InputTag leps = selectedLayer1Electrons
+  InputTag mets = selectedLayer1METs
+
+  InputTag match = findTtSemiJetCombMVA
+  bool useOnlyMatch = false
+
+  uint32 maxNJets = 4
+
+  uint32 maxNrIter          = 500
+  double maxDeltaS          = 5e-5
+  double maxF               = 1e-4
+  uint32 jetParametrisation = 0		// 0: EMom, 1: EtEtaPhi, 2: EtThetaPhi
+  uint32 lepParametrisation = 0		// 0: EMom, 1: EtEtaPhi, 2: EtThetaPhi
+  uint32 metParametrisation = 0		// 0: EMom, 1: EtEtaPhi, 2: EtThetaPhi
+  vint32 constraints        = {1, 2}	// 1: Whadr, 2: Wlep, 3: thadr, 4: tlep, 5: nu-mas
+}
