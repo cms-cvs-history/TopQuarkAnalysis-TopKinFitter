@@ -1,5 +1,5 @@
 //
-// $Id: TtSemiKinFitter.cc,v 1.8 2008/05/29 20:52:24 rwolf Exp $
+// $Id: TtSemiKinFitter.cc,v 1.8.2.1 2008/08/01 15:08:30 snaumann Exp $
 //
 
 #include "TopQuarkAnalysis/TopKinFitter/interface/TtSemiKinFitter.h"
@@ -447,7 +447,7 @@ TtSemiEvtSolution TtSemiKinFitter::addKinFitInfo(TtSemiEvtSolution * asol)
     fitsol.setFitLepl( getFitLepl() );
     fitsol.setFitLepn( getFitLepn() );
     // store the fit's chi2 probability
-    fitsol.setProbChi2(TMath::Prob(theFitter_->getS(), theFitter_->getNDF()));
+    fitsol.setProbChi2( getProb() );
   }
 
   return fitsol;

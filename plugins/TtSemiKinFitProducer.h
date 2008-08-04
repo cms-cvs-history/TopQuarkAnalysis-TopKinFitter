@@ -70,6 +70,7 @@ TtSemiKinFitProducer<LeptonCollection>::TtSemiKinFitProducer(const edm::Paramete
 
   produces< std::vector<int> >();
   produces< double >("Chi2");
+  produces< double >("Prob");
   produces< int >("Status");
 }
 
@@ -91,6 +92,7 @@ void TtSemiKinFitProducer<LeptonCollection>::produce(edm::Event& evt, const edm:
 
   std::auto_ptr< std::vector<int> > pCombi(new std::vector<int>);
   std::auto_ptr< double > pChi2( new double);
+  std::auto_ptr< double > pProb( new double);
   std::auto_ptr< int > pStatus( new int);
 
   edm::Handle<std::vector<pat::Jet> > jets;
@@ -143,6 +145,8 @@ void TtSemiKinFitProducer<LeptonCollection>::produce(edm::Event& evt, const edm:
     evt.put(pCombi);
     *pChi2 = -1.;
     evt.put(pChi2, "Chi2");
+    *pProb = -1.;
+    evt.put(pProb, "Prob");
     *pStatus = -1;
     evt.put(pStatus, "Status");
     return;
@@ -176,6 +180,7 @@ void TtSemiKinFitProducer<LeptonCollection>::produce(edm::Event& evt, const edm:
   
   double bestChi2 = -1.;
   std::vector<int> bestCombi;
+  double bestProb = -1.;
   int bestStatus = -1;
 
   do{
@@ -206,6 +211,7 @@ void TtSemiKinFitProducer<LeptonCollection>::produce(edm::Event& evt, const edm:
 	  bestLepn = fitter->getFitLepn();
 	  bestChi2 = chi2;
 	  bestCombi = combi;
+	  bestProb = fitter->getProb();
 	  bestStatus = status;
 	}
 
@@ -243,6 +249,10 @@ void TtSemiKinFitProducer<LeptonCollection>::produce(edm::Event& evt, const edm:
   // feed out chi2
   *pChi2=bestChi2;
   evt.put(pChi2, "Chi2");
+
+  // feed out chi2 probability 
+  *pProb=bestProb;
+  evt.put(pProb, "Prob");
 
   // feed out status of the fitter
   *pStatus=bestStatus;

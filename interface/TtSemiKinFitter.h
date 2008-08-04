@@ -1,5 +1,5 @@
 //
-// $Id: TtSemiKinFitter.h,v 1.4 2008/02/17 11:38:30 rwolf Exp $
+// $Id: TtSemiKinFitter.h,v 1.4.2.1 2008/08/01 15:08:29 snaumann Exp $
 //
 
 #ifndef TopKinFitter_TtSemiKinFitter_h
@@ -45,6 +45,7 @@ class TtSemiKinFitter {
 
   int getNIter() const { return theFitter_->getNbIter(); };
   double getS()  const { return theFitter_->getS(); };
+  double getProb() const { return TMath::Prob(theFitter_->getS(), theFitter_->getNDF()); };
   
   TtSemiEvtSolution addKinFitInfo(TtSemiEvtSolution * asol);
   
