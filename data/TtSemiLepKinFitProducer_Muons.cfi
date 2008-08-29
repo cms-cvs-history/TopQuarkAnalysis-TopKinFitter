@@ -14,5 +14,5 @@ module kinFitTtSemiLepEvent = TtSemiLepKinFitProducerMuon {
   uint32 jetParametrisation = 1		// 0: EMom, 1: EtEtaPhi, 2: EtThetaPhi
   uint32 lepParametrisation = 1		// 0: EMom, 1: EtEtaPhi, 2: EtThetaPhi
   uint32 metParametrisation = 1		// 0: EMom, 1: EtEtaPhi, 2: EtThetaPhi
-  vint32 constraints        = {1, 2}	// 1: Whad-mass, 2: Wlep-mass, 3: thad-mass, 4: tlep-mass, 5: nu-mass
+  vuint32 constraints       = {1, 2}	// 1: Whad-mass, 2: Wlep-mass, 3: thad-mass, 4: tlep-mass, 5: nu-mass
 }
