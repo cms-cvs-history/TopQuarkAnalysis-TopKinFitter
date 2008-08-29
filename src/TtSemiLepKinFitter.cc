@@ -1,8 +1,4 @@
-//
-// $Id: TtSemiKinFitter.cc,v 1.8.2.2 2008/08/04 09:00:01 snaumann Exp $
-//
-
-#include "TopQuarkAnalysis/TopKinFitter/interface/TtSemiKinFitter.h"
+#include "TopQuarkAnalysis/TopKinFitter/interface/TtSemiLepKinFitter.h"
 
 #include "TopQuarkAnalysis/TopTools/interface/TtSemiLepEvtPartons.h"
 
@@ -12,13 +8,9 @@
 #include "PhysicsTools/KinFitter/interface/TFitParticleEScaledMomDev.h"
 #include "PhysicsTools/KinFitter/interface/TFitParticleEtEtaPhi.h"
 #include "PhysicsTools/KinFitter/interface/TFitParticleEtThetaPhi.h"
-/* other parametrizations and constraints
-#include "PhysicsTools/KinFitter/interface/TFitParticleESpher.h"
-#include "PhysicsTools/KinFitter/interface/TFitParticleMCPInvSpher.h"
-#include "PhysicsTools/KinFitter/interface/TFitConstraintMGaus.h"
-#include "PhysicsTools/KinFitter/interface/TFitConstraintEp.h"*/
 
-TtSemiKinFitter::TtSemiKinFitter() :
+
+TtSemiLepKinFitter::TtSemiLepKinFitter() :
   jetParam_(EMom), 
   lepParam_(EMom), 
   metParam_(EMom),
@@ -29,7 +21,7 @@ TtSemiKinFitter::TtSemiKinFitter() :
   setupFitter();
 }
 
-TtSemiKinFitter::TtSemiKinFitter(int jetParam, int lepParam, int metParam,
+TtSemiLepKinFitter::TtSemiLepKinFitter(int jetParam, int lepParam, int metParam,
                                  int maxNrIter, double maxDeltaS, double maxF, std::vector<int> constraints) :
   jetParam_((Parametrization) jetParam), 
   lepParam_((Parametrization) lepParam), 
@@ -42,7 +34,7 @@ TtSemiKinFitter::TtSemiKinFitter(int jetParam, int lepParam, int metParam,
   setupFitter();
 }
 
-TtSemiKinFitter::TtSemiKinFitter(Parametrization jetParam, Parametrization lepParam, Parametrization metParam,
+TtSemiLepKinFitter::TtSemiLepKinFitter(Parametrization jetParam, Parametrization lepParam, Parametrization metParam,
                                  int maxNrIter, double maxDeltaS, double maxF, std::vector<int> constraints) :
     jetParam_(jetParam), 
     lepParam_(lepParam), 
@@ -55,7 +47,7 @@ TtSemiKinFitter::TtSemiKinFitter(Parametrization jetParam, Parametrization lepPa
   setupFitter();
 }
 
-TtSemiKinFitter::~TtSemiKinFitter() 
+TtSemiLepKinFitter::~TtSemiLepKinFitter() 
 {
   delete cons1_; delete cons2_; delete cons3_; delete cons4_; delete cons5_;
   delete fitHadb_; delete fitHadp_; delete fitHadq_;
@@ -63,7 +55,7 @@ TtSemiKinFitter::~TtSemiKinFitter()
   delete theFitter_;
 }
 
-void TtSemiKinFitter::setupFitter() 
+void TtSemiLepKinFitter::setupFitter() 
 {  
   // FIXME: replace by messagelogger!!!
 
@@ -160,10 +152,10 @@ void TtSemiKinFitter::setupFitter()
 }
 
 template <class LeptonType>
-int TtSemiKinFitter::fit(const std::vector<pat::Jet>& jets, const pat::Lepton<LeptonType>& lepton, const pat::MET& neutrino)
+int TtSemiLepKinFitter::fit(const std::vector<pat::Jet>& jets, const pat::Lepton<LeptonType>& lepton, const pat::MET& neutrino)
 {
   if( jets.size()<4 )
-    throw edm::Exception( edm::errors::Configuration, "Cannot run the TtSemiKinFitter with less than 4 jets" );
+    throw edm::Exception( edm::errors::Configuration, "Cannot run the TtSemiLepKinFitter with less than 4 jets" );
 
   // get jets in right order
   pat::Jet Hadp = jets[TtSemiLepEvtPartons::LightQ   ];
@@ -421,7 +413,7 @@ int TtSemiKinFitter::fit(const std::vector<pat::Jet>& jets, const pat::Lepton<Le
   return theFitter_->getStatus();
 }
 
-TtSemiEvtSolution TtSemiKinFitter::addKinFitInfo(TtSemiEvtSolution * asol) 
+TtSemiEvtSolution TtSemiLepKinFitter::addKinFitInfo(TtSemiEvtSolution * asol) 
 {
 
   TtSemiEvtSolution fitsol(*asol);
@@ -454,7 +446,7 @@ TtSemiEvtSolution TtSemiKinFitter::addKinFitInfo(TtSemiEvtSolution * asol)
 
 }
 
-vector<float> TtSemiKinFitter::translateCovM(TMatrixD &V){
+vector<float> TtSemiLepKinFitter::translateCovM(TMatrixD &V){
   vector<float> covM; 
   for(int ii=0; ii<V.GetNrows(); ii++){
     for(int jj=0; jj<V.GetNcols(); jj++) covM.push_back(V(ii,jj));

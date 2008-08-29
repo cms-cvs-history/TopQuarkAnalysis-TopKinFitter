@@ -1,22 +1,22 @@
-#ifndef TtSemiKinFitProducer_h
-#define TtSemiKinFitProducer_h
+#ifndef TtSemiLepKinFitProducer_h
+#define TtSemiLepKinFitProducer_h
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
-#include "TopQuarkAnalysis/TopKinFitter/interface/TtSemiKinFitter.h"
+#include "TopQuarkAnalysis/TopKinFitter/interface/TtSemiLepKinFitter.h"
 #include "TopQuarkAnalysis/TopTools/interface/TtSemiLepEvtPartons.h"
 
 #include "PhysicsTools/JetMCUtils/interface/combination.h"
 
 template <typename LeptonCollection>
-class TtSemiKinFitProducer : public edm::EDProducer {
+class TtSemiLepKinFitProducer : public edm::EDProducer {
   
  public:
   
-  explicit TtSemiKinFitProducer(const edm::ParameterSet&);
-  ~TtSemiKinFitProducer();
+  explicit TtSemiLepKinFitProducer(const edm::ParameterSet&);
+  ~TtSemiLepKinFitProducer();
   
  private:
 
@@ -39,12 +39,12 @@ class TtSemiKinFitProducer : public edm::EDProducer {
   unsigned int metParam_;
   std::vector<int> constraints_;
 
-  TtSemiKinFitter* fitter;
+  TtSemiLepKinFitter* fitter;
 
 };
 
 template<typename LeptonCollection>
-TtSemiKinFitProducer<LeptonCollection>::TtSemiKinFitProducer(const edm::ParameterSet& cfg):
+TtSemiLepKinFitProducer<LeptonCollection>::TtSemiLepKinFitProducer(const edm::ParameterSet& cfg):
   jets_        (cfg.getParameter<edm::InputTag>("jets")),
   leps_        (cfg.getParameter<edm::InputTag>("leps")),
   mets_        (cfg.getParameter<edm::InputTag>("mets")),
@@ -59,7 +59,7 @@ TtSemiKinFitProducer<LeptonCollection>::TtSemiKinFitProducer(const edm::Paramete
   metParam_    (cfg.getParameter<unsigned>         ("metParametrisation")),
   constraints_ (cfg.getParameter<std::vector<int> >("constraints"       ))
 {
-  fitter = new TtSemiKinFitter(jetParam_, lepParam_, metParam_, maxNrIter_, maxDeltaS_, maxF_, constraints_);
+  fitter = new TtSemiLepKinFitter(jetParam_, lepParam_, metParam_, maxNrIter_, maxDeltaS_, maxF_, constraints_);
 
   produces< std::vector<pat::Particle> >("Partons");
   produces< std::vector<pat::Particle> >("Leptons");
@@ -72,13 +72,13 @@ TtSemiKinFitProducer<LeptonCollection>::TtSemiKinFitProducer(const edm::Paramete
 }
 
 template<typename LeptonCollection>
-TtSemiKinFitProducer<LeptonCollection>::~TtSemiKinFitProducer()
+TtSemiLepKinFitProducer<LeptonCollection>::~TtSemiLepKinFitProducer()
 {
   delete fitter;
 }
 
 template<typename LeptonCollection>
-void TtSemiKinFitProducer<LeptonCollection>::produce(edm::Event& evt, const edm::EventSetup& setup)
+void TtSemiLepKinFitProducer<LeptonCollection>::produce(edm::Event& evt, const edm::EventSetup& setup)
 {
   std::auto_ptr< std::vector<pat::Particle> > pPartons  ( new std::vector<pat::Particle> );
   std::auto_ptr< std::vector<pat::Particle> > pLeptons  ( new std::vector<pat::Particle> );

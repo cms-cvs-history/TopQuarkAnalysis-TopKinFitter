@@ -1,9 +1,5 @@
-//
-// $Id: TtSemiKinFitter.h,v 1.4.2.1 2008/08/01 15:08:29 snaumann Exp $
-//
-
-#ifndef TopKinFitter_TtSemiKinFitter_h
-#define TopKinFitter_TtSemiKinFitter_h
+#ifndef TtSemiLepKinFitter_h
+#define TtSemiLepKinFitter_h
 
 #include "PhysicsTools/KinFitter/interface/TKinFitter.h"
 
@@ -20,7 +16,7 @@
 class TAbsFitParticle;
 class TFitConstraintM;
 
-class TtSemiKinFitter {
+class TtSemiLepKinFitter {
   
  public:
   
@@ -28,10 +24,10 @@ class TtSemiKinFitter {
   
  public:
   
-  TtSemiKinFitter();
-  TtSemiKinFitter(int jetParam, int lepParam, int metParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<int> constraints);
-  TtSemiKinFitter(Parametrization jetParam, Parametrization lepParam, Parametrization metParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<int> constraints);
-  ~TtSemiKinFitter();
+  TtSemiLepKinFitter();
+  TtSemiLepKinFitter(int jetParam, int lepParam, int metParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<int> constraints);
+  TtSemiLepKinFitter(Parametrization jetParam, Parametrization lepParam, Parametrization metParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<int> constraints);
+  ~TtSemiLepKinFitter();
 
   template <class LeptonType>
   int fit(const std::vector<pat::Jet>&, const pat::Lepton<LeptonType>&, const pat::MET&);

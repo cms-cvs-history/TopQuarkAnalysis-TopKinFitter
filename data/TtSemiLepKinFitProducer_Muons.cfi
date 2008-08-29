@@ -1,9 +1,9 @@
-module kinFitTtSemiEvent = TtSemiKinFitProducerMuon {
+module kinFitTtSemiLepEvent = TtSemiLepKinFitProducerMuon {
   InputTag jets = selectedLayer1Jets
   InputTag leps = selectedLayer1Muons
   InputTag mets = selectedLayer1METs
 
-  InputTag match = findTtSemiJetCombMVA
+  InputTag match = findTtSemilepJetCombMVA
   bool useOnlyMatch = false
 
   uint32 maxNJets = 4
