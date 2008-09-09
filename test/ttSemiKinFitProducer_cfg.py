@@ -52,5 +52,5 @@ process.load("TopQuarkAnalysis.TopKinFitter.TtSemiLepKinFitProducer_Muons_cfi")
 
 ## process path
 process.p = cms.Path(process.tqafLayer1  *
-                     process.kinFitTtSemiEvent
+                     process.kinFitTtSemiLepEvent
                      )
