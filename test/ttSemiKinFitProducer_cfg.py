@@ -46,15 +46,20 @@ process.GlobalTag.globaltag = cms.string('STARTUP_V4::All')
 ## load magnetic field
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
-
 #-------------------------------------------------
 # tqaf configuration
 #-------------------------------------------------
 
 ## std sequence for tqaf layer1
-process.load("TopQuarkAnalysis.TopObjectProducers.tqafLayer1_full_cff")
+process.load("TopQuarkAnalysis.TopObjectProducers.tqafLayer1_cff")
 
-## std sequence to produce the ttSemiEvent
+## necessary fixes to run 2.2.X on 2.1.X data
+## comment this when running on samples produced
+## with 22X
+from PhysicsTools.PatAlgos.tools.cmsswVersionTools import run22XonSummer08AODSIM
+run22XonSummer08AODSIM(process)
+
+## std sequence to produce the kinematic fit for semi-leptonic events
 process.load("TopQuarkAnalysis.TopKinFitter.TtSemiLepKinFitProducer_Muons_cfi")
 
 ## process path
