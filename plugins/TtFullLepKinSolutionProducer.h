@@ -2,7 +2,7 @@
 #define TtFullLepKinSolutionProducer_h
 
 //
-// $Id: TtFullLepKinSolutionProducer.cc,v 0.1 2009/04/17 dammann $
+// $Id: TtFullLepKinSolutionProducer.h,v 1.1.2.1 2009/05/22 15:43:54 dammann Exp $
 //
 #include <memory>
 #include <string>
@@ -258,7 +258,7 @@ void TtFullLepKinSolutionProducer::produce(edm::Event & evt, const edm::EventSet
 				
 	else if (emu) {
 	  if(!isWrongCharge){
-	    if((*electrons)[selElectron1].charge()>0){	  
+	    if(HasPositiveCharge(&(*electrons)[selElectron1])){	  
               idcs.push_back(selElectron1);	  
 	      LV_l1.SetXYZT((*electrons)[selElectron1].px(), 
 	                    (*electrons)[selElectron1].py(), 
@@ -280,28 +280,28 @@ void TtFullLepKinSolutionProducer::produce(edm::Event & evt, const edm::EventSet
 	    }
 	    else{
 	      idcs.push_back(-1);	    
-	    
-              idcs.push_back(selElectron1);	  
-	      LV_l1.SetXYZT((*electrons)[selElectron1].px(), 
-	                    (*electrons)[selElectron1].py(), 
-		            (*electrons)[selElectron1].pz(), 
-		            (*electrons)[selElectron1].energy());	  
-              xconstraint += (*electrons)[selElectron1].px();
-              yconstraint += (*electrons)[selElectron1].py();
-    
+	        
               idcs.push_back(selMuon1);	  
-	      LV_l2.SetXYZT((*muons)[selMuon1].px(), 
+	      LV_l1.SetXYZT((*muons)[selMuon1].px(), 
 	                    (*muons)[selMuon1].py(), 
 		            (*muons)[selMuon1].pz(), 
 		            (*muons)[selMuon1].energy());	  
               xconstraint += (*muons)[selMuon1].px();
               yconstraint += (*muons)[selMuon1].py();
+	      
+              idcs.push_back(selElectron1);	  
+	      LV_l2.SetXYZT((*electrons)[selElectron1].px(), 
+	                    (*electrons)[selElectron1].py(), 
+		            (*electrons)[selElectron1].pz(), 
+		            (*electrons)[selElectron1].energy());	  
+              xconstraint += (*electrons)[selElectron1].px();
+              yconstraint += (*electrons)[selElectron1].py();	      
 	      	  
 	      idcs.push_back(-1);			    
 	    }	    	    
 	  }
 	  else{  // means "if wrong charge"
-	    if((*electrons)[selElectron1].charge()>0){	// both leps positive    	    
+	    if(HasPositiveCharge(&(*electrons)[selElectron1])){	// both leps positive    	    
               idcs.push_back(selElectron1);	  
 	      LV_l1.SetXYZT((*electrons)[selElectron1].px(), 
 	                    (*electrons)[selElectron1].py(), 
@@ -326,7 +326,7 @@ void TtFullLepKinSolutionProducer::produce(edm::Event & evt, const edm::EventSet
 	      idcs.push_back(-1);	    
 	    
               idcs.push_back(selElectron1);	  
-	      LV_l1.SetXYZT((*electrons)[selElectron1].px(), 
+	      LV_l2.SetXYZT((*electrons)[selElectron1].px(), 
 	                    (*electrons)[selElectron1].py(), 
 		            (*electrons)[selElectron1].pz(), 
 		            (*electrons)[selElectron1].energy());	  
@@ -336,7 +336,7 @@ void TtFullLepKinSolutionProducer::produce(edm::Event & evt, const edm::EventSet
 	      idcs.push_back(-1);
     
               idcs.push_back(selMuon1);	  
-	      LV_l2.SetXYZT((*muons)[selMuon1].px(), 
+	      LV_l1.SetXYZT((*muons)[selMuon1].px(), 
 	                    (*muons)[selMuon1].py(), 
 		            (*muons)[selMuon1].pz(), 
 		            (*muons)[selMuon1].energy());	  
@@ -419,19 +419,7 @@ void TtFullLepKinSolutionProducer::produce(edm::Event & evt, const edm::EventSet
     << "\n  nubar: " << nuBarL
     << "\n   idcs: " << idxL;
   } 
-  
-//   cout << "IsWrongCharge = " << isWrongCharge << std::endl;
-//   cout << "Weights and indices BEFORE sorting:" << std::endl;
-//   for(unsigned int i=0; i<weightsV.size(); ++i){
-//     std::cout << "w: " << weightsV[i].first << std::endl;    
-//     std::cout << "i: ";
-//     for(int j=0; j<6; ++j){
-//       std::cout << idcsV[i][j] << " ";
-//     }
-//     std::cout << std::endl;
-//   }   
-  
-  
+    
   // sort vectors by weight in decreasing order
   if(weightsV.size()>1){
     sort(weightsV.begin(), weightsV.end(), Compare());
@@ -447,17 +435,7 @@ void TtFullLepKinSolutionProducer::produce(edm::Event & evt, const edm::EventSet
     pNuBars->push_back(nuBarsV[weightsV[i].second]);    
     pIdcs  ->push_back(idcsV[weightsV[i].second]);    
   }
-  
-//   cout << "Weights and indices AFTER sorting:" << std::endl;
-//   for(unsigned int i=0; i<weightsV.size(); ++i){
-//     std::cout << "w: " << weightsV[i].first << std::endl;    
-//     std::cout << "i: ";
-//     for(int j=0; j<6; ++j){
-//       std::cout << (pIdcs->at(i))[j] << " ";
-//     }
-//     std::cout << std::endl;
-//   }
-         
+           
   // put the results in the event
   evt.put(pIdcs);     
   evt.put(pNus,         "fullLepNeutrinos");  
