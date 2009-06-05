@@ -10,7 +10,7 @@ kinSolutionTtFullLepEvent = cms.EDProducer("TtFullLepKinSolutionProducer",
     # maximum number of jets to be considered in the
     # jet combinatorics (has to be >= 2
     # ------------------------------------------------
-    maxNJets = cms.int32(4),
+    maxNJets = cms.int32(2),
     
     #-------------------------------------------------       
     # maximum number of jet combinations finally
@@ -18,14 +18,14 @@ kinSolutionTtFullLepEvent = cms.EDProducer("TtFullLepKinSolutionProducer",
     # (has to be >= 1, can be set to -1 if you want to 
     # take all)
     #-------------------------------------------------
-    maxNComb = cms.int32(3),
+    maxNComb = cms.int32(1),
 
     # ------------------------------------------------
     # Select if also solutions with wrong charge lepton 
     # combinations are to be looked for, e.g. solutions
     # with 2 equally charged leptons
     # ------------------------------------------------
-    searchWrongCharge = cms.bool(True),
+    searchWrongCharge = cms.bool(False),
     
     # ------------------------------------------------
     # Channel(s) for which solutions are searched
