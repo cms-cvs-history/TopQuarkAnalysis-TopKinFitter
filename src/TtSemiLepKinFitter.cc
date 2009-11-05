@@ -16,28 +16,18 @@
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-//default configuration is: Parametrization kEMom,
-//                          Max iterations =  200, 
-//                          deltaS        <= 5e-5,
-//                          maxF          <= 1e-4
-//                          no constraints
-TtSemiLepKinFitter::TtSemiLepKinFitter() : 
+/// default configuration is: Parametrization kEMom, Max iterations = 200, deltaS<= 5e-5, maxF<= 1e-4, no constraints
+TtSemiLepKinFitter::TtSemiLepKinFitter(): 
   fitter_(0), hadB_(0), hadP_(0), hadQ_(0), lepB_(0), lepton_(0), neutrino_(0),
   jetParam_(kEMom), lepParam_(kEMom), metParam_(kEMom), maxNrIter_(200), maxDeltaS_( 5e-5), maxF_(1e-4) 
 {
   setupFitter();
 }
 
-TtSemiLepKinFitter::TtSemiLepKinFitter(Param  jetParam, 
-				       Param  lepParam, 
-				       Param  metParam,
-				       int    maxNrIter, 
-				       double maxDeltaS, 
-				       double maxF, 
-				       std::vector<Constraint> constr) :
+TtSemiLepKinFitter::TtSemiLepKinFitter(Param jetParam, Param lepParam, Param metParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<Constraint> constraints):
   fitter_(0), hadB_(0), hadP_(0), hadQ_(0), lepB_(0), lepton_(0), neutrino_(0),
   jetParam_(jetParam), lepParam_(lepParam), metParam_(metParam), maxNrIter_(maxNrIter), 
-  maxDeltaS_(maxDeltaS), maxF_(maxF), constrList_(constr) 
+  maxDeltaS_(maxDeltaS), maxF_(maxF), constrList_(constraints) 
 {
   setupFitter();
 }
@@ -53,7 +43,7 @@ TtSemiLepKinFitter::~TtSemiLepKinFitter()
   delete neutrino_;
 }
 
-void TtSemiLepKinFitter::printSetup()
+void TtSemiLepKinFitter::printSetup() const
 {
   std::string constr;
   for(unsigned int i=0; i<constrList_.size(); ++i){
@@ -123,11 +113,11 @@ void TtSemiLepKinFitter::setupLeptons()
 
 void TtSemiLepKinFitter::setupConstraints() 
 {
-  massConstr_[kWHadMass    ] = new TFitConstraintM("WMassHad",    "WMassHad",    0, 0 , 80.35);
-  massConstr_[kWLepMass    ] = new TFitConstraintM("WMassLep",    "WMassLep",    0, 0 , 80.35);
-  massConstr_[kTopHadMass  ] = new TFitConstraintM("TopMassHad",  "TopMassHad",  0, 0,   175.);
-  massConstr_[kTopLepMass  ] = new TFitConstraintM("TopMassLep",  "TopMassLep",  0, 0,   175.);
-  massConstr_[kNeutrinoMass] = new TFitConstraintM("NeutrinoMass","NeutrinoMass",0, 0,     0.);
+  massConstr_[kWHadMass    ] = new TFitConstraintM("WMassHad",    "WMassHad",    0,  0,  80.35);
+  massConstr_[kWLepMass    ] = new TFitConstraintM("WMassLep",    "WMassLep",    0,  0,  80.35);
+  massConstr_[kTopHadMass  ] = new TFitConstraintM("TopMassHad",  "TopMassHad",  0,  0,   173.);
+  massConstr_[kTopLepMass  ] = new TFitConstraintM("TopMassLep",  "TopMassLep",  0,  0,   173.);
+  massConstr_[kNeutrinoMass] = new TFitConstraintM("NeutrinoMass","NeutrinoMass",0,  0,     0.);
   
   massConstr_[kWHadMass    ]->addParticles1(hadP_,   hadQ_    );
   massConstr_[kWLepMass    ]->addParticles1(lepton_, neutrino_);
@@ -548,10 +538,11 @@ TtSemiEvtSolution TtSemiLepKinFitter::addKinFitInfo(TtSemiEvtSolution* asol)
   return fitsol;
 }
 
-vector<float> TtSemiLepKinFitter::translateCovM(TMatrixD &V){
-  vector<float> covM; 
-  for(int ii=0; ii<V.GetNrows(); ii++){
-    for(int jj=0; jj<V.GetNcols(); jj++) covM.push_back(V(ii,jj));
+/// change format from TMatrixD to specially sorted vector<float>
+vector<float> TtSemiLepKinFitter::translateCovM(TMatrixD& inMatrix){
+  vector<float> outMatrix; 
+  for(int ii=0; ii<inMatrix.GetNrows(); ii++){
+    for(int jj=0; jj<inMatrix.GetNcols(); jj++) outMatrix.push_back(inMatrix(ii,jj));
   }
-  return covM;
+  return outMatrix;
 }
