@@ -21,13 +21,27 @@ TtFullHadKinFitter::TtFullHadKinFitter():
   setupFitter();
 }
 
-// /// constructor initialized with build-in types as custom parameters 
-// TtFullHadKinFitter::TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints):
-//   fitter_(0), b_(0), bBar_(0), lightQ_(0), lightQBar_(0), lightP_(0), lightPBar_(0),
-//   jetParam_((Param)jetParam), maxNrIter_(maxNrIter), maxDeltaS_(maxDeltaS), maxF_(maxF), constraints_((std::vector<Constraint>)constraints)
-// {
-//   setupFitter();
-// }
+/// used to convert vector of int's to vector of constraints (just used in TtFullHadKinFitter(int, int, double, double, std::vector<unsigned int>))
+std::vector<TtFullHadKinFitter::Constraint>
+TtFullHadKinFitter::IntConstraintsToConstraint(std::vector<unsigned int> constraints)
+{
+  std::vector<TtFullHadKinFitter::Constraint> cConstraints;
+  cConstraints.resize(constraints.size());
+  for(unsigned int i=0;i<constraints.size();++i)
+    {
+      cConstraints[i]=(Constraint)constraints[i];
+    }
+  return cConstraints;
+}
+
+/// constructor initialized with build-in types as custom parameters (only included to keep TtHadEvtSolutionMaker.cc running)
+TtFullHadKinFitter::TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints):
+  fitter_(0), b_(0), bBar_(0), lightQ_(0), lightQBar_(0), lightP_(0), lightPBar_(0),
+  jetParam_((Param)jetParam), maxNrIter_(maxNrIter), maxDeltaS_(maxDeltaS), maxF_(maxF),
+  constraints_(IntConstraintsToConstraint(constraints))
+{
+  setupFitter();
+}
 
 /// constructor initialized with build-in types and class enum's custom parameters
 TtFullHadKinFitter::TtFullHadKinFitter(Param jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<Constraint> constraints):

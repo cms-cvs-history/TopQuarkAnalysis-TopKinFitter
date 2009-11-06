@@ -34,8 +34,10 @@ class TtFullHadKinFitter {
  public:
   /// default constructor
   TtFullHadKinFitter();
-  /// constructor initialized with build-in types as custom parameters 
-  //TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints);
+  /// used to convert vector of int's to vector of constraints (just used in TtFullHadKinFitter(int, int, double, double, std::vector<unsigned int>))
+  std::vector<TtFullHadKinFitter::Constraint> IntConstraintsToConstraint(std::vector<unsigned int> constraints);
+  /// constructor initialized with build-in types as custom parameters (only included to keep TtHadEvtSolutionMaker.cc running)
+  TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints);
   /// constructor initialized with build-in types and class enum's custom parameters
   TtFullHadKinFitter(Param jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<Constraint> constraints);
   /// default destructor
