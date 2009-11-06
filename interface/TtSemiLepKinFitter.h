@@ -16,7 +16,7 @@ class TAbsFitParticle;
 class TFitConstraintM;
 
 /*
-  \class   TtFullHadKinFitter TtFullHadKinFitter.h "TopQuarkAnalysis/TopKinFitter/interface/TtFullHadKinFitter.h"
+  \class   TtSemiLepKinFitter TtSemiLepKinFitter.h "TopQuarkAnalysis/TopKinFitter/interface/TtSemiLepKinFitter.h"
   
   \brief   one line description to be added here...
 
