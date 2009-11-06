@@ -23,7 +23,7 @@ TtFullHadKinFitter::TtFullHadKinFitter():
 
 /// used to convert vector of int's to vector of constraints (just used in TtFullHadKinFitter(int, int, double, double, std::vector<unsigned int>))
 std::vector<TtFullHadKinFitter::Constraint>
-TtFullHadKinFitter::IntConstraintsToConstraint(std::vector<unsigned int> constraints)
+TtFullHadKinFitter::intToConstraint(std::vector<unsigned int> constraints)
 {
   std::vector<TtFullHadKinFitter::Constraint> cConstraints;
   cConstraints.resize(constraints.size());
@@ -38,7 +38,7 @@ TtFullHadKinFitter::IntConstraintsToConstraint(std::vector<unsigned int> constra
 TtFullHadKinFitter::TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints):
   fitter_(0), b_(0), bBar_(0), lightQ_(0), lightQBar_(0), lightP_(0), lightPBar_(0),
   jetParam_((Param)jetParam), maxNrIter_(maxNrIter), maxDeltaS_(maxDeltaS), maxF_(maxF),
-  constraints_(IntConstraintsToConstraint(constraints))
+  constraints_(intToConstraint(constraints))
 {
   setupFitter();
 }
