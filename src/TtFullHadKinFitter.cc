@@ -146,7 +146,7 @@ TtFullHadKinFitter::setupFitter()
   setupJets();
   setupConstraints();
 
-  fitter_= new TKinFitter("TtFullHadtonicFit", "TtFullHadtonicFit");
+  fitter_= new TKinFitter("TtFullHadronicFit", "TtFullHadronicFit");
 
   // configure fit
   fitter_->setMaxNbIter(maxNrIter_);
@@ -278,8 +278,8 @@ TtFullHadKinFitter::fit(const std::vector<pat::Jet>& jets)
   }
 
   // set the kinematics of the objects to be fitted
-  b_   ->setIni4Vec(&p4B   );
-  bBar_->setIni4Vec(&p4BBar);
+  b_        ->setIni4Vec(&p4B        );
+  bBar_     ->setIni4Vec(&p4BBar     );
   lightQ_   ->setIni4Vec(&p4LightQ   );
   lightQBar_->setIni4Vec(&p4LightQBar);
   lightP_   ->setIni4Vec(&p4LightP   );
