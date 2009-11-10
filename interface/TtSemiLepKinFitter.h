@@ -34,15 +34,16 @@ class TtSemiLepKinFitter {
   enum Param{ kEMom, kEtEtaPhi, kEtThetaPhi };
 
  public:
-  /// default contructor
+  /// default constructor
   explicit TtSemiLepKinFitter();
-  /// constructor initialized with build-in types and class enum's custom parameters
-  explicit TtSemiLepKinFitter(Param jetParam, Param lepParam, Param metParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<Constraint> constraints);
+  /// constructor initialized with built-in types and class enum's custom parameters
+  explicit TtSemiLepKinFitter(Param jetParam, Param lepParam, Param metParam, int maxNrIter, double maxDeltaS, double maxF,
+			      std::vector<Constraint> constraints, double mW=80.4, double mTop=173.);
   /// default destructor
   ~TtSemiLepKinFitter();
 
   /// kinematic fit interface
-  template <class LeptonType> int fit(const std::vector<pat::Jet>  & jets, const pat::Lepton<LeptonType>& leps, const pat::MET& met);
+  template <class LeptonType> int fit(const std::vector<pat::Jet>& jets, const pat::Lepton<LeptonType>& leps, const pat::MET& met);
   // return hadronic b quark candidate
   const pat::Particle fittedHadB() const { return (fitter_->getStatus()==0 ? fittedHadB_ : pat::Particle()); };
   // return hadronic light quark candidate
@@ -113,6 +114,10 @@ class TtSemiLepKinFitter {
   double maxF_;
   /// vector of constraints to be used
   std::vector<Constraint> constrList_;  
+  /// W mass value used for constraints
+  double mW_;
+  /// top mass value used for constraints
+  double mTop_;
 };
 
 /// convert Param to human readable form
