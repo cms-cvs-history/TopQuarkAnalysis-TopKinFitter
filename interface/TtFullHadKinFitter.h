@@ -37,9 +37,11 @@ class TtFullHadKinFitter {
   /// used to convert vector of int's to vector of constraints (just used in TtFullHadKinFitter(int, int, double, double, std::vector<unsigned int>))
   std::vector<TtFullHadKinFitter::Constraint> intToConstraint(std::vector<unsigned int> constraints);
   /// constructor initialized with build-in types as custom parameters (only included to keep TtHadEvtSolutionMaker.cc running)
-  TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints);
-  /// constructor initialized with build-in types and class enum's custom parameters
-  TtFullHadKinFitter(Param jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<Constraint> constraints);
+  TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints,
+		     double mW=80.4, double mTop=173.);
+  /// constructor initialized with built-in types and class enum's custom parameters
+  TtFullHadKinFitter(Param jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<Constraint> constraints,
+		     double mW=80.4, double mTop=173.);
   /// default destructor
   ~TtFullHadKinFitter();
 
@@ -106,7 +108,11 @@ class TtFullHadKinFitter {
   /// maximal allowed distance from constraints
   double maxF_;
   /// vector of constraints to be used
-  std::vector<Constraint> constraints_;   
+  std::vector<Constraint> constraints_;
+  /// W mass value used for constraints
+  double mW_;
+  /// top mass value used for constraints
+  double mTop_;
 };
 
 /// convert Param to human readable form

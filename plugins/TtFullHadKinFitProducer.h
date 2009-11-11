@@ -58,6 +58,10 @@ class TtFullHadKinFitProducer : public edm::EDProducer {
   unsigned int jetParam_;
   /// numbering of different possible kinematic constraints
   std::vector<unsigned> constraints_;
+  /// W mass value used for constraints
+  double mW_;
+  /// top mass value used for constraints
+  double mTop_;
 
   /// kinematic fit interface
   TtFullHadKinFitter* fitter;

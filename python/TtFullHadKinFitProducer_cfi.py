@@ -36,12 +36,19 @@ kinFitTtFullHadEvent = cms.EDProducer("TtFullHadKinFitProducer",
     # 0: EMom, 1: EtEtaPhi, 2: EtThetaPhi
     # ------------------------------------------------
     jetParametrisation = cms.uint32(1),
+
     # ------------------------------------------------
     # set constraints
     # 1: W1-mass, 2: W2-mass
     # 3: t1-mass, 4: t2-mass
     # ------------------------------------------------                                   
-    constraints = cms.vuint32(1, 2, 3, 4)
+    constraints = cms.vuint32(1, 2, 3, 4),
+
+    # ------------------------------------------------
+    # set mass values used in the constraints
+    # ------------------------------------------------    
+    mW   = cms.double(80.4),
+    mTop = cms.double(173.)
 )
 
 

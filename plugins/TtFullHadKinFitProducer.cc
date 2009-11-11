@@ -13,10 +13,12 @@ TtFullHadKinFitProducer::TtFullHadKinFitProducer(const edm::ParameterSet& cfg):
   maxDeltaS_   (cfg.getParameter<double>("maxDeltaS")),
   maxF_        (cfg.getParameter<double>("maxF")),
   jetParam_    (cfg.getParameter<unsigned>("jetParametrisation")),
-  constraints_ (cfg.getParameter<std::vector<unsigned> >("constraints"))
+  constraints_ (cfg.getParameter<std::vector<unsigned> >("constraints")),
+  mW_          (cfg.getParameter<double>("mW"  )),
+  mTop_        (cfg.getParameter<double>("mTop"))
 {
   // define kinematic fit interface
-  fitter = new TtFullHadKinFitter(param(jetParam_), maxNrIter_, maxDeltaS_, maxF_, constraints(constraints_));
+  fitter = new TtFullHadKinFitter(param(jetParam_), maxNrIter_, maxDeltaS_, maxF_, constraints(constraints_), mW_, mTop_);
 
   // produces the following collections
   produces< std::vector<pat::Particle> >("PartonsB");
@@ -163,11 +165,11 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
 
   if( fitResults.size() < 1 ) { 
     // in case no fit results were stored in the list (i.e. when all fits were aborted)
-    pPartonsB->push_back( fitter->fittedB() );
-    pPartonsBBar->push_back( fitter->fittedBBar() );
-    pPartonsLightQ->push_back( fitter->fittedLightQ() );
+    pPartonsB        ->push_back( fitter->fittedB()         );
+    pPartonsBBar     ->push_back( fitter->fittedBBar()      );
+    pPartonsLightQ   ->push_back( fitter->fittedLightQ()    );
     pPartonsLightQBar->push_back( fitter->fittedLightQBar() );
-    pPartonsLightP->push_back( fitter->fittedLightP() );
+    pPartonsLightP   ->push_back( fitter->fittedLightP()    );
     pPartonsLightPBar->push_back( fitter->fittedLightPBar() );
     // indices referring to the jet combination
     std::vector<int> invalidCombi(nPartons, -1);
@@ -187,11 +189,11 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
       }
       iComb++;
       // partons
-      pPartonsB->push_back( result->B );
-      pPartonsBBar->push_back( result->BBar );
-      pPartonsLightQ->push_back( result->LightQ );
+      pPartonsB        ->push_back( result->B         );
+      pPartonsBBar     ->push_back( result->BBar      );
+      pPartonsLightQ   ->push_back( result->LightQ    );
       pPartonsLightQBar->push_back( result->LightQBar );
-      pPartonsLightP->push_back( result->LightP );
+      pPartonsLightP   ->push_back( result->LightP    );
       pPartonsLightPBar->push_back( result->LightPBar );
       // indices referring to the jet combination
       pCombi->push_back( result->JetCombi );

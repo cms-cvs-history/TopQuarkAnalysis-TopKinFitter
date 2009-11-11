@@ -16,7 +16,7 @@
 /// default constructor
 TtFullHadKinFitter::TtFullHadKinFitter():
   fitter_(0), b_(0), bBar_(0), lightQ_(0), lightQBar_(0), lightP_(0), lightPBar_(0),
-  jetParam_(kEMom), maxNrIter_(200), maxDeltaS_(5e-5), maxF_(1e-4) 
+  jetParam_(kEMom), maxNrIter_(200), maxDeltaS_(5e-5), maxF_(1e-4), mW_(80.4), mTop_(173.)
 {
   setupFitter();
 }
@@ -35,18 +35,20 @@ TtFullHadKinFitter::intToConstraint(std::vector<unsigned int> constraints)
 }
 
 /// constructor initialized with build-in types as custom parameters (only included to keep TtHadEvtSolutionMaker.cc running)
-TtFullHadKinFitter::TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<unsigned int> constraints):
+TtFullHadKinFitter::TtFullHadKinFitter(int jetParam, int maxNrIter, double maxDeltaS, double maxF,
+				       std::vector<unsigned int> constraints, double mW, double mTop):
   fitter_(0), b_(0), bBar_(0), lightQ_(0), lightQBar_(0), lightP_(0), lightPBar_(0),
   jetParam_((Param)jetParam), maxNrIter_(maxNrIter), maxDeltaS_(maxDeltaS), maxF_(maxF),
-  constraints_(intToConstraint(constraints))
+  constraints_(intToConstraint(constraints)), mW_(mW), mTop_(mTop)
 {
   setupFitter();
 }
 
 /// constructor initialized with build-in types and class enum's custom parameters
-TtFullHadKinFitter::TtFullHadKinFitter(Param jetParam, int maxNrIter, double maxDeltaS, double maxF, std::vector<Constraint> constraints):
+TtFullHadKinFitter::TtFullHadKinFitter(Param jetParam, int maxNrIter, double maxDeltaS, double maxF,
+				       std::vector<Constraint> constraints, double mW, double mTop):
   fitter_(0), b_(0), bBar_(0), lightQ_(0), lightQBar_(0), lightP_(0), lightPBar_(0),
-  jetParam_(jetParam), maxNrIter_(maxNrIter), maxDeltaS_(maxDeltaS), maxF_(maxF), constraints_(constraints) 
+  jetParam_(jetParam), maxNrIter_(maxNrIter), maxDeltaS_(maxDeltaS), maxF_(maxF), constraints_(constraints), mW_(mW), mTop_(mTop)
 {
   setupFitter();
 }
@@ -67,13 +69,13 @@ TtFullHadKinFitter::~TtFullHadKinFitter()
 void 
 TtFullHadKinFitter::printSetup() const
 {
-  std::string constr;
+  std::stringstream constr;
   for(unsigned int i=0; i<constraints_.size(); ++i){
     switch(constraints_[i]){
-    case kWPlusMass  : constr += "    * W+-mass \n"; break;
-    case kWMinusMass : constr += "    * W--mass \n"; break;
-    case kTopMass    : constr += "    * t-mass  \n"; break;
-    case kTopBarMass : constr += "    * tBar-mass \n"; break;
+    case kWPlusMass  : constr << "    * W+-mass   (" << mW_   << " GeV) \n"; break;
+    case kWMinusMass : constr << "    * W--mass   (" << mW_   << " GeV) \n"; break;
+    case kTopMass    : constr << "    * t-mass    (" << mTop_ << " GeV) \n"; break;
+    case kTopBarMass : constr << "    * tBar-mass (" << mTop_ << " GeV) \n"; break;
     }
   }
   edm::LogVerbatim( "TtFullHadKinFitter" ) 
@@ -82,7 +84,7 @@ TtFullHadKinFitter::printSetup() const
     << "  Parametrization:                                \n" 
     << "   * jet : " << param(jetParam_) << "\n"
     << "  Constraints:                                    \n"
-    <<    constr
+    <<    constr.str()
     << "  Max(No iterations): " << maxNrIter_ << "\n"
     << "  Max(deltaS)       : " << maxDeltaS_ << "\n"
     << "  Max(F)            : " << maxF_      << "\n"
@@ -127,10 +129,10 @@ TtFullHadKinFitter::setupJets()
 void 
 TtFullHadKinFitter::setupConstraints() 
 {
-  massConstr_[kWPlusMass ] = new TFitConstraintM("WPlusMass" , "WPlusMass"  ,  0,  0,  80.35);
-  massConstr_[kWMinusMass] = new TFitConstraintM("WMinusMass", "WMinusMass" ,  0,  0,  80.35);
-  massConstr_[kTopMass   ] = new TFitConstraintM("TopMass"   , "TopMass"    ,  0,  0,   173.);
-  massConstr_[kTopBarMass] = new TFitConstraintM("TopBarMass", "TopBarMass" ,  0,  0,   173.);
+  massConstr_[kWPlusMass ] = new TFitConstraintM("WPlusMass" , "WPlusMass"  ,  0,  0, mW_  );
+  massConstr_[kWMinusMass] = new TFitConstraintM("WMinusMass", "WMinusMass" ,  0,  0, mW_  );
+  massConstr_[kTopMass   ] = new TFitConstraintM("TopMass"   , "TopMass"    ,  0,  0, mTop_);
+  massConstr_[kTopBarMass] = new TFitConstraintM("TopBarMass", "TopBarMass" ,  0,  0, mTop_);
   
   massConstr_[kWPlusMass ]->addParticles1(lightQ_, lightQBar_);
   massConstr_[kWMinusMass]->addParticles1(lightP_, lightPBar_);
