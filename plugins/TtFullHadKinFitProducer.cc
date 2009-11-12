@@ -63,9 +63,8 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
 
   // get match in case that useOnlyMatch_ is true
   std::vector<int> match;
-
+  bool invalidMatch=false;
   if(useOnlyMatch_) {
-    bool invalidMatch=false;
     // in case that only a ceratin match should be used, get match here
     edm::Handle<std::vector<std::vector<int> > > matches;
     event.getByLabel(match_, matches);
@@ -85,10 +84,49 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
   }
 
   /**
+   // --------------------------------------------------------
+   // skip events with less jets than partons or invalid match
+   // --------------------------------------------------------
+  **/
+
+  if( jets->size()<nPartons || invalidMatch ) {
+    // the kinFit getters return empty objects here
+    pPartonsB        ->push_back( fitter->fittedB()         );
+    pPartonsBBar     ->push_back( fitter->fittedBBar()      );
+    pPartonsLightQ   ->push_back( fitter->fittedLightQ()    );
+    pPartonsLightQBar->push_back( fitter->fittedLightQBar() );
+    pPartonsLightP   ->push_back( fitter->fittedLightP()    );
+    pPartonsLightPBar->push_back( fitter->fittedLightPBar() );
+    // indices referring to the jet combination
+    std::vector<int> invalidCombi;
+    for(unsigned int i = 0; i < nPartons; ++i) 
+      invalidCombi.push_back( -1 );
+    pCombi->push_back( invalidCombi );
+    // chi2
+    pChi2->push_back( -1. );
+    // chi2 probability
+    pProb->push_back( -1. );
+    // status of the fitter
+    pStatus->push_back( -1 );
+    // feed out all products
+    event.put(pCombi);
+    event.put(pPartonsB        , "PartonsB"        );
+    event.put(pPartonsBBar     , "PartonsBBar"     );
+    event.put(pPartonsLightQ   , "PartonsLightQ"   );
+    event.put(pPartonsLightQBar, "PartonsLightQBar");
+    event.put(pPartonsLightP   , "PartonsLightP"   );
+    event.put(pPartonsLightPBar, "PartonsLightPBar");
+    event.put(pChi2            , "Chi2"            );
+    event.put(pProb            , "Prob"            );
+    event.put(pStatus          , "Status"          );
+    return;
+  }
+
+  /**
      analyze different jet combinations using the KinFitter
      (or only a given jet combination if useOnlyMatch=true)
   **/
-  
+
   std::vector<int> jetIndices;
   if(!useOnlyMatch_) {
     for(unsigned int idx=0; idx<jets->size(); ++idx){
@@ -157,7 +195,7 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
   
   // sort results w.r.t. chi2 values
   fitResults.sort();
-  
+
   /**
      feed out result starting with the 
      JetComb having the smallest chi2
@@ -205,9 +243,10 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
       pStatus->push_back( result->Status );
     }
   }
+
   event.put(pCombi);
-  event.put(pPartonsB        , "PartonsB" );
-  event.put(pPartonsBBar     , "PartonsBBar" );
+  event.put(pPartonsB        , "PartonsB"        );
+  event.put(pPartonsBBar     , "PartonsBBar"     );
   event.put(pPartonsLightQ   , "PartonsLightQ"   );
   event.put(pPartonsLightQBar, "PartonsLightQBar");
   event.put(pPartonsLightP   , "PartonsLightP"   );
