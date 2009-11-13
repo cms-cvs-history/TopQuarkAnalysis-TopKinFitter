@@ -63,6 +63,8 @@ TtFullHadKinFitter::~TtFullHadKinFitter()
   delete lightQBar_; 
   delete lightP_; 
   delete lightPBar_;
+  for(std::map<Constraint, TFitConstraintM*>::iterator it = massConstr_.begin(); it != massConstr_.end(); ++it)
+    delete it->second;
 }
 
 /// print fitter setup

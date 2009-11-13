@@ -44,6 +44,8 @@ TtSemiLepKinFitter::~TtSemiLepKinFitter()
   delete lepB_; 
   delete lepton_; 
   delete neutrino_;
+  for(std::map<Constraint, TFitConstraintM*>::iterator it = massConstr_.begin(); it != massConstr_.end(); ++it)
+    delete it->second;
 }
 
 void TtSemiLepKinFitter::printSetup() const
