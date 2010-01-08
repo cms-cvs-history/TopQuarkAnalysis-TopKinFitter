@@ -7,6 +7,9 @@ TtFullHadKinFitProducer::TtFullHadKinFitProducer(const edm::ParameterSet& cfg):
   jets_        (cfg.getParameter<edm::InputTag>("jets")),
   match_       (cfg.getParameter<edm::InputTag>("match")),
   useOnlyMatch_(cfg.getParameter<bool>("useOnlyMatch")),
+  bTagAlgo_    (cfg.getParameter<edm::InputTag>("bTagAlgo")),
+  bTagValue_   (cfg.getParameter<double>("bTagValue")),
+  useBTag_     (cfg.getParameter<bool>("useBTag")),
   maxNJets_    (cfg.getParameter<int>("maxNJets")),
   maxNComb_    (cfg.getParameter<int>("maxNComb")),
   maxNrIter_   (cfg.getParameter<unsigned int>("maxNrIter")),
@@ -141,58 +144,114 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
   }
 
   std::list<KinFitResult> fitResults;
-  do{
-    for(int cnt=0; cnt<TMath::Factorial(combi.size()); ++cnt){
-      // take into account indistinguishability of the two jets from the two W decays,
-      // this reduces the combinatorics by a factor of 2*2
-      if( combi[TtFullHadEvtPartons::LightQ] < combi[TtFullHadEvtPartons::LightQBar] ||
-	  combi[TtFullHadEvtPartons::LightP] < combi[TtFullHadEvtPartons::LightPBar] ||
-	  useOnlyMatch_ ) {
-	
-	std::vector<pat::Jet> jetCombi;
-	jetCombi.resize(nPartons);
-	jetCombi[TtFullHadEvtPartons::LightQ   ] = (*jets)[combi[TtFullHadEvtPartons::LightQ   ]];
-	jetCombi[TtFullHadEvtPartons::LightQBar] = (*jets)[combi[TtFullHadEvtPartons::LightQBar]];
-	jetCombi[TtFullHadEvtPartons::B        ] = (*jets)[combi[TtFullHadEvtPartons::B        ]];
-	jetCombi[TtFullHadEvtPartons::BBar     ] = (*jets)[combi[TtFullHadEvtPartons::BBar     ]];
-	jetCombi[TtFullHadEvtPartons::LightP   ] = (*jets)[combi[TtFullHadEvtPartons::LightP   ]];
-	jetCombi[TtFullHadEvtPartons::LightPBar] = (*jets)[combi[TtFullHadEvtPartons::LightPBar]];
-
-	// do the kinematic fit
-	int status = fitter->fit(jetCombi);
-
-	if( status!=-10 ) { 
-	  // fill struct KinFitResults if was not
-	  // aborted (due to errors during fitting)
-	  KinFitResult result;
-	  result.Status   = status;
-	  result.Chi2     = fitter->fitS();
-	  result.Prob     = fitter->fitProb();
-	  result.B        = fitter->fittedB();
-	  result.BBar     = fitter->fittedBBar();
-	  result.LightQ   = fitter->fittedLightQ();
-	  result.LightQBar= fitter->fittedLightQBar();
-	  result.LightP   = fitter->fittedLightP();
-	  result.LightPBar= fitter->fittedLightPBar();
-	  result.JetCombi = combi;
-	  // push back fit result
-	  fitResults.push_back( result );
+  if( !useBTag_ ){
+    do{
+      for(int cnt=0; cnt<TMath::Factorial(combi.size()); ++cnt){
+	// take into account indistinguishability of the two jets from the two W decays,
+	// this reduces the combinatorics by a factor of 2*2
+	if( combi[TtFullHadEvtPartons::LightQ] < combi[TtFullHadEvtPartons::LightQBar] ||
+	    combi[TtFullHadEvtPartons::LightP] < combi[TtFullHadEvtPartons::LightPBar] ||
+	    useOnlyMatch_ ) {
+	  
+	  std::vector<pat::Jet> jetCombi;
+	  jetCombi.resize(nPartons);
+	  jetCombi[TtFullHadEvtPartons::LightQ   ] = (*jets)[combi[TtFullHadEvtPartons::LightQ   ]];
+	  jetCombi[TtFullHadEvtPartons::LightQBar] = (*jets)[combi[TtFullHadEvtPartons::LightQBar]];
+	  jetCombi[TtFullHadEvtPartons::B        ] = (*jets)[combi[TtFullHadEvtPartons::B        ]];
+	  jetCombi[TtFullHadEvtPartons::BBar     ] = (*jets)[combi[TtFullHadEvtPartons::BBar     ]];
+	  jetCombi[TtFullHadEvtPartons::LightP   ] = (*jets)[combi[TtFullHadEvtPartons::LightP   ]];
+	  jetCombi[TtFullHadEvtPartons::LightPBar] = (*jets)[combi[TtFullHadEvtPartons::LightPBar]];
+	  
+	  // do the kinematic fit
+	  int status = fitter->fit(jetCombi);
+	  
+	  if( status!=-10 ) { 
+	    // fill struct KinFitResults if was not
+	    // aborted (due to errors during fitting)
+	    KinFitResult result;
+	    result.Status   = status;
+	    result.Chi2     = fitter->fitS();
+	    result.Prob     = fitter->fitProb();
+	    result.B        = fitter->fittedB();
+	    result.BBar     = fitter->fittedBBar();
+	    result.LightQ   = fitter->fittedLightQ();
+	    result.LightQBar= fitter->fittedLightQBar();
+	    result.LightP   = fitter->fittedLightP();
+	    result.LightPBar= fitter->fittedLightPBar();
+	    result.JetCombi = combi;
+	    // push back fit result
+	    fitResults.push_back( result );
+	  }
 	}
+	// don't go through combinatorics if useOnlyMatch was chosen
+	if(useOnlyMatch_){
+	  break; 
+	}
+	// next permutation
+	std::next_permutation( combi.begin(), combi.end() );
       }
       // don't go through combinatorics if useOnlyMatch was chosen
       if(useOnlyMatch_){
-	break; 
+	break;
       }
-      // next permutation
-      std::next_permutation( combi.begin(), combi.end() );
     }
-    // don't go through combinatorics if useOnlyMatch was chosen
-    if(useOnlyMatch_){
-      break;
-    }
+    while( stdcomb::next_combination( jetIndices.begin(), jetIndices.end(), combi.begin(), combi.end() ) );
   }
-  while( stdcomb::next_combination( jetIndices.begin(), jetIndices.end(), combi.begin(), combi.end() ) );
-  
+
+  // for b-tagging
+  if( useBTag_){
+    do{
+      for(int cnt=0; cnt<TMath::Factorial(combi.size()); ++cnt){
+	// take into account indistinguishability of the two jets from the two W decays,
+	// this reduces the combinatorics by a factor of 2*2
+	if( combi[TtFullHadEvtPartons::LightQ] < combi[TtFullHadEvtPartons::LightQBar] ||
+	    combi[TtFullHadEvtPartons::LightP] < combi[TtFullHadEvtPartons::LightPBar] ){
+	
+	  if( (*jets)[combi[TtFullHadEvtPartons::B        ]].bDiscriminator("trackCountingHighPurBJetTags") >  bTagValue_ &&
+	      (*jets)[combi[TtFullHadEvtPartons::BBar     ]].bDiscriminator("trackCountingHighPurBJetTags") >  bTagValue_ &&
+	      (*jets)[combi[TtFullHadEvtPartons::LightQ   ]].bDiscriminator("trackCountingHighPurBJetTags") <= bTagValue_ &&
+	      (*jets)[combi[TtFullHadEvtPartons::LightQBar]].bDiscriminator("trackCountingHighPurBJetTags") <= bTagValue_ &&
+	      (*jets)[combi[TtFullHadEvtPartons::LightP   ]].bDiscriminator("trackCountingHighPurBJetTags") <= bTagValue_ &&
+	      (*jets)[combi[TtFullHadEvtPartons::LightPBar]].bDiscriminator("trackCountingHighPurBJetTags") <= bTagValue_ ) {
+
+	    std::vector<pat::Jet> jetCombi;
+	    jetCombi.resize(nPartons);
+	    jetCombi[TtFullHadEvtPartons::LightQ   ] = (*jets)[combi[TtFullHadEvtPartons::LightQ   ]];
+	    jetCombi[TtFullHadEvtPartons::LightQBar] = (*jets)[combi[TtFullHadEvtPartons::LightQBar]];
+	    jetCombi[TtFullHadEvtPartons::B        ] = (*jets)[combi[TtFullHadEvtPartons::B        ]];
+	    jetCombi[TtFullHadEvtPartons::BBar     ] = (*jets)[combi[TtFullHadEvtPartons::BBar     ]];
+	    jetCombi[TtFullHadEvtPartons::LightP   ] = (*jets)[combi[TtFullHadEvtPartons::LightP   ]];
+	    jetCombi[TtFullHadEvtPartons::LightPBar] = (*jets)[combi[TtFullHadEvtPartons::LightPBar]];
+
+	    // do the kinematic fit
+	    int status = fitter->fit(jetCombi);
+
+	    if( status!=-10 ) { 
+	      // fill struct KinFitResults if was not
+	      // aborted (due to errors during fitting)
+	      KinFitResult result;
+	      result.Status   = status;
+	      result.Chi2     = fitter->fitS();
+	      result.Prob     = fitter->fitProb();
+	      result.B        = fitter->fittedB();
+	      result.BBar     = fitter->fittedBBar();
+	      result.LightQ   = fitter->fittedLightQ();
+	      result.LightQBar= fitter->fittedLightQBar();
+	      result.LightP   = fitter->fittedLightP();
+	      result.LightPBar= fitter->fittedLightPBar();
+	      result.JetCombi = combi;
+	      // push back fit result
+	      fitResults.push_back( result );
+	    }
+	  }
+	}
+	// next permutation
+	std::next_permutation( combi.begin(), combi.end() );
+      }
+    }
+    while( stdcomb::next_combination( jetIndices.begin(), jetIndices.end(), combi.begin(), combi.end() ) ); 
+  }
+
   // sort results w.r.t. chi2 values
   fitResults.sort();
 

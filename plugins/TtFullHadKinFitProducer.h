@@ -44,6 +44,12 @@ class TtFullHadKinFitProducer : public edm::EDProducer {
   /// switch to tell whether all possible combinations should be used for the fit 
   /// or only a certain combination
   bool useOnlyMatch_;
+  /// input tag for b-tagging algorithm
+  edm::InputTag bTagAlgo_;
+   /// min value of bTag for a b-jet
+  double bTagValue_;
+  /// switch to tell whether to use b-tagging or not
+  bool useBTag_;
   /// maximal number of jets (-1 possible to indicate 'all')  
   int maxNJets_;
   /// maximal number of combinations to be written to rthe event
