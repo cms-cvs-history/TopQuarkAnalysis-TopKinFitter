@@ -28,9 +28,10 @@ kinFitTtFullHadEvent = cms.EDProducer("TtFullHadKinFitProducer",
     # ------------------------------------------------
     # option to use b-tagging
     # ------------------------------------------------
-    bTagAlgo  = cms.InputTag("trackCountingHighPurBJetTags"),
-    bTagValue = cms.double(3.0),
-    useBTag   = cms.bool(True),
+    bTagAlgo            = cms.string("combinedSecondaryVertexBJetTags"),
+    minBTagValueBJet    = cms.double(0.9),
+    maxBTagValueNonBJet = cms.double(0.9),
+    useBTag             = cms.bool(True),
 
     # ------------------------------------------------
     # settings for the KinFitter
