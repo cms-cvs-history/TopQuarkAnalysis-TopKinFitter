@@ -208,9 +208,10 @@ TtFullHadKinFitProducer::produce(edm::Event& event, const edm::EventSetup& setup
   do{
     for(int cnt=0; cnt<TMath::Factorial(combi.size()); ++cnt){
       // take into account indistinguishability of the two jets from the two W decays,
-      // this reduces the combinatorics by a factor of 2*2
+      // and the two decay branches, this reduces the combinatorics by a factor of 2*2*2
       if( (combi[TtFullHadEvtPartons::LightQ] < combi[TtFullHadEvtPartons::LightQBar] ||
 	   combi[TtFullHadEvtPartons::LightP] < combi[TtFullHadEvtPartons::LightPBar] ||
+	   combi[TtFullHadEvtPartons::B]      < combi[TtFullHadEvtPartons::BBar]      ||
 	   useOnlyMatch_) && doBTagging(bTags_, bJetCounter, corL_, corB_, jets, combi, 
 					bTagAlgo_, minBTagValueBJet_, maxBTagValueNonBJet_) ) {
 
